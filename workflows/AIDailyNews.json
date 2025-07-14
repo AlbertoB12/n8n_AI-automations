@@ -1,1 +1,544 @@
--
+{
+  "name": "AIDailyNews",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -260
+      ],
+      "id": "5fb7ed54-fa74-480f-8734-9f150e359286",
+      "name": "Schedule Trigger",
+      "notes": "Execute the automation every day at midnight."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe60f39a-1ff5-4405-9f0f-4808c1e4410a",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "b8f3a32a-eb0a-4542-aa67-380a081d6401",
+              "name": "creator",
+              "value": "={{ $json.creator }}",
+              "type": "string"
+            },
+            {
+              "id": "270a0b42-a2cd-489d-8cef-48da5113ab75",
+              "name": "pubDate",
+              "value": "={{ $json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "1a1efa19-ee2c-4b71-9640-84bc8d20b31a",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "eaea5576-eead-49cb-8063-b4cf4b37d79a",
+              "name": "link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        -260
+      ],
+      "id": "f3ac161c-a171-48f8-9f9d-f2ca6d6ee7ab",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e9008b5f-8f75-4bef-b002-342a914807ee",
+              "leftValue": "={{ new Date($json.pubDate).toISOString().slice(0,10) }}",
+              "rightValue": "={{ $today.minus({ days:1 }).toISODate() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -260
+      ],
+      "id": "8cc95bda-5eac-4316-8933-8dc3bcfacca4",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "chatId": "",
+        "text": "=Hello!  I have here one interesting summary for you:\n\n<b>Title:</b> {{ $json.Title }}\n<b>Author:</b> {{ $json.Author }}\n<b>Publication date:</b> {{ $json[\"Publication date\"] }}\n<b>News link:</b> {{ $json.Link }}\n<b>Summary:</b>\n{{ $json.Summary }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_notification": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1916,
+        -260
+      ],
+      "id": "b21de896-0f4b-4076-ab7f-0cccb4415a47",
+      "name": "Telegram",
+      "webhookId": "78bfa821-4461-4028-b57f-9c37e372c53c",
+      "credentials": {
+        "telegramApi": {
+          "id": "fIpuC6WkT3EEJKo4",
+          "name": "AIDailyNews"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize this AI news in bullet points. Give only the result in this format:\n\n*📰 Title:* {{ $json.title }}  \n*✍️ Author:* {{ $json.creator }}  \n*🔗 Link:* {{ $json.link }}  \n*🧠 Summary:* \n\nNews text:  \n{{ $json.content }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1100,
+        -135
+      ],
+      "id": "4925500c-27b4-4a3f-9681-d9c59626ae35",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:1b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1188,
+        85
+      ],
+      "id": "c942acb8-a8d9-4c23-a5c1-9c4eb25e0296",
+      "name": "Ollama Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "1gnjAn8BMXTjWvEX",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://ai-techpark.com/category/ai/feed/",
+        "options": {
+          "ignoreSSL": false
+        }
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        -660
+      ],
+      "id": "db3caaa4-9db7-47c5-acf7-91094d4c5638",
+      "name": "RSS Read - ai-techpark",
+      "notes": "Get news from this source via RSS."
+    },
+    {
+      "parameters": {
+        "url": "https://knowtechie.com/category/ai/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        -460
+      ],
+      "id": "8c4611d1-cd7a-45a8-b8a8-b130eb76a084",
+      "name": "RSS Read - knowtechie"
+    },
+    {
+      "parameters": {
+        "url": "https://aibusiness.com/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        -260
+      ],
+      "id": "c39528fd-0562-4c54-a0ae-063d5e7a716a",
+      "name": "RSS Read - aibusiness"
+    },
+    {
+      "parameters": {
+        "url": "https://www.theguardian.com/technology/artificialintelligenceai/rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        -60
+      ],
+      "id": "50fed843-a0dc-4d5f-ae62-0c4499bf5d1f",
+      "name": "RSS Read - theguardian"
+    },
+    {
+      "parameters": {
+        "url": "https://huggingface.co/blog/feed.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        140
+      ],
+      "id": "74a6191d-78b5-44b5-bb26-2763cef6c574",
+      "name": "RSS Read - huggingface"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        440,
+        -302
+      ],
+      "id": "4f01ab90-0c3b-4f1c-861d-a7317580e8d5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1476,
+        -260
+      ],
+      "id": "62884214-0a36-489f-906f-a13f363da91e",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87c73153-b3d2-42df-915d-2a40845d422e",
+              "name": "Title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "8227dcb1-7134-4661-a8f3-9db9e443b1b8",
+              "name": "Author",
+              "value": "={{ $json.creator }}",
+              "type": "string"
+            },
+            {
+              "id": "7a9da734-219e-4817-97df-569a4344cfb3",
+              "name": "Publication date",
+              "value": "={{ $json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "408d67c9-51e2-4d3d-83fd-68442d060601",
+              "name": "Summary",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "2e36c66e-479a-4365-b038-84894d4aed3d",
+              "name": "Link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        -260
+      ],
+      "id": "f413a55b-1c77-466c-a23c-52f2c9178d51",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger\nStart every day at 00:01 am"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        -440
+      ],
+      "typeVersion": 1,
+      "id": "de74a290-1bf0-46a9-9126-1ca4f0a37607",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Filter \nKeep only news of the day before"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        -440
+      ],
+      "typeVersion": 1,
+      "id": "86fa4e8a-9daa-4ed9-ba35-1bd8c82ea070",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Send to Telegram\nSend news to Telegram"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1840,
+        -440
+      ],
+      "typeVersion": 1,
+      "id": "46718c2f-bd52-4d09-9154-7cc08d9374c5",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read - knowtechie",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read - ai-techpark",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read - aibusiness",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read - theguardian",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read - huggingface",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        []
+      ]
+    },
+    "RSS Read - ai-techpark": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read - knowtechie": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS Read - aibusiness": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "RSS Read - theguardian": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "RSS Read - huggingface": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Madrid",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "af635d36-a951-47da-9cc2-47e5c627562e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68c78b5f5127dab9c9c85759cf1cc527cbfc0b062ed9029302333429c7a80fff"
+  },
+  "id": "leDF96qh65pW1bug",
+  "tags": []
+}

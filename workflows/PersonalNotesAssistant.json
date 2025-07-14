@@ -1,0 +1,499 @@
+{
+  "name": "PersonalNotesAssistant",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        280
+      ],
+      "id": "7871183c-2248-4bb0-a12e-99d5292483bb",
+      "name": "Telegram Trigger",
+      "webhookId": "6029ce63-61e3-4098-8e1f-2907e86d54f0",
+      "credentials": {
+        "telegramApi": {
+          "id": "wYYXAzaJrvt3JLAh",
+          "name": "TakeMyNotes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "id": "eeec87eb-f23d-45a6-b053-a5667189a695",
+      "name": "Get Voice File",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        660,
+        380
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "74c2aa99-cfa0-4835-8524-a0063d6f184e",
+      "credentials": {
+        "telegramApi": {
+          "id": "wYYXAzaJrvt3JLAh",
+          "name": "TakeMyNotes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are my personal assistant that helps me note my ideas. Summarize in bullet points this text to be saved in my notes and do not invent anything (give me no introduction or explanation, just the bullet points with the summary): \n'{{ $json.message.text }}'.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1100,
+        -120
+      ],
+      "id": "08a2ade9-f7c7-44b5-acfa-463e8f0a3e0e",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:1b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1188,
+        100
+      ],
+      "id": "dc84d96d-5b4e-44c6-932f-5fa2ef5cfe99",
+      "name": "Ollama Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "1gnjAn8BMXTjWvEX",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "a2d6691c-beed-44d8-a67f-be43b28155df"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6ce5f222-d555-470b-862d-e132b9a5fb72",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        440,
+        180
+      ],
+      "id": "b969e8f8-d467-47e3-8c31-894d67ddd3b7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are my personal assistant that helps me note my ideas. Summarize in bullet points this text to be saved in my notes and do not invent anything (give me no introduction or explanation, just the bullet points with the summary): \n{{ $json.data }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1100,
+        380
+      ],
+      "id": "aecff81f-1688-4aa5-9405-d474d2041a27",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:1b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1188,
+        600
+      ],
+      "id": "0e49f038-14e0-4f06-85e8-1fec21a2cca6",
+      "name": "Ollama Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "1gnjAn8BMXTjWvEX",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d2e36e10-3ffc-47ab-bf1a-3c9639b0106a",
+              "leftValue": "={{ $json.message.from.id }}",
+              "rightValue": ,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        280
+      ],
+      "id": "fbefcf9b-6af5-4a4b-8bed-878e9a4c0b82",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ json.message.from.id }}",
+        "text": "I am sorry, you have no access to my services.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        380
+      ],
+      "id": "3e95c679-b0dd-41bc-861e-e3c11e2be99f",
+      "name": "Send a text message",
+      "webhookId": "f7dff382-0768-47c8-9203-7611d9ad2174",
+      "credentials": {
+        "telegramApi": {
+          "id": "wYYXAzaJrvt3JLAh",
+          "name": "TakeMyNotes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:9000/asr",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "audio_file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        380
+      ],
+      "id": "92fa3ec1-9b9b-49f1-90fb-a825d20f4f68",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "chatId": "",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1476,
+        180
+      ],
+      "id": "c2abe1ff-805c-443b-af79-f408bd495417",
+      "name": "Send a text message1",
+      "webhookId": "3a560bdd-dec3-40b6-a2cc-bea226d8751f",
+      "credentials": {
+        "telegramApi": {
+          "id": "wYYXAzaJrvt3JLAh",
+          "name": "TakeMyNotes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Telegram Trigger\nStart automation when receiving a Telegram message"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "29aa8c0b-37db-4f27-ac7a-175687529cab",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## If\nDetect if message comes from admited user"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        140,
+        440
+      ],
+      "typeVersion": 1,
+      "id": "2f92b3be-f888-41ac-87de-83e8118326f8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Switch\nCheck if message is a text or audio message"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        480,
+        -40
+      ],
+      "typeVersion": 1,
+      "id": "d7e1d568-d28d-49ce-abf2-7e20612d8a92",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Transcription\nTranscribe audio locally with Whisper API"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        780,
+        560
+      ],
+      "typeVersion": 1,
+      "id": "b183602b-0a0c-4a2d-9a80-97944b825fe3",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## AI Agent\nGenerate answer from AI Agent"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        200
+      ],
+      "typeVersion": 1,
+      "id": "962f8b82-b2fc-4fd5-8e09-639bacbcbcec",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Telegram \nSend response with elaborated note to the user"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1500,
+        -20
+      ],
+      "typeVersion": 1,
+      "id": "e6caefea-909f-4db1-970b-365faafdbc31",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voice File": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Voice File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "bdd5e15f-5374-4329-b45d-b1683d01f454",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68c78b5f5127dab9c9c85759cf1cc527cbfc0b062ed9029302333429c7a80fff"
+  },
+  "id": "A97E7YWDFrFl5S1k",
+  "tags": []
+}

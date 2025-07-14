@@ -53,9 +53,11 @@ They are stable, lightweight, and perfect for local-first automation fans.
 ---
 
 ## 📸 Screenshots
-
-![AIDailyNews](./screenshots/AIDailyNews.png)  
-![PersonalAssistant](./screenshots/PersonalAssistant.png)  
+**AIDailyNews**
+![AIDailyNews](./screenshots/AIDailyNews.png)
+**PersonalAssistant**
+![PersonalAssistant](./screenshots/PersonalAssistant.png)
+**PersonalNotesAssistant**
 ![PersonalNotesAssistant](./screenshots/PersonalNotesAssistant.png)
 
 ---

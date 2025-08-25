@@ -31,6 +31,7 @@ This project consists of **three powerful AI Agents** running **locally** on a *
 - Converts voice or text messages into clean, summarized notes.
 - Uses Whisper for transcription and LLM for summarization.
 - Organizes the notes and sends them back in Telegram-ready format.
+- [https://n8n.io/workflows/6013-create-personal-notes-with-voice-transcription-using-local-llama-and-telegram/](https://n8n.io/workflows/6013-create-personal-notes-with-voice-transcription-using-local-llama-and-telegram/)
 
 ---
 

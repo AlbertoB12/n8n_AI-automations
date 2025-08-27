@@ -21,6 +21,7 @@ This project consists of **three powerful AI Agents** running **locally** on a *
 - Automatically scrapes content from selected sites or channels.
 - Sends summarized updates directly to your Telegram inbox.
 - Ideal for AI-curated daily briefings.
+-[https://n8n.io/workflows/6011-daily-ai-news-digest-with-rss-llama-32-summarization-and-telegram-delivery](https://n8n.io/workflows/6011-daily-ai-news-digest-with-rss-llama-32-summarization-and-telegram-delivery)
 
 ### 2. 🧑‍💼 PersonalAssistant
 - Acts as a general-purpose chatbot and productivity assistant.

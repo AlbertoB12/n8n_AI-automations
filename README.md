@@ -21,12 +21,14 @@ This project consists of **three powerful AI Agents** running **locally** on a *
 - Automatically scrapes content from selected sites or channels.
 - Sends summarized updates directly to your Telegram inbox.
 - Ideal for AI-curated daily briefings.
--[https://n8n.io/workflows/6011-daily-ai-news-digest-with-rss-llama-32-summarization-and-telegram-delivery](https://n8n.io/workflows/6011-daily-ai-news-digest-with-rss-llama-32-summarization-and-telegram-delivery)
+-
+[https://n8n.io/workflows/6011-daily-ai-news-digest-with-rss-llama-32-summarization-and-telegram-delivery](https://n8n.io/workflows/6011-daily-ai-news-digest-with-rss-llama-32-summarization-and-telegram-delivery)
 
 ### 2. 🧑‍💼 PersonalAssistant
 - Acts as a general-purpose chatbot and productivity assistant.
 - Handles questions, reminders, and routine tasks via Telegram.
 - Uses a local LLM for reasoning and replies.
+- [https://n8n.io/workflows/6012-create-a-privacy-focused-ai-assistant-with-telegram-ollama-and-whisper](https://n8n.io/workflows/6012-create-a-privacy-focused-ai-assistant-with-telegram-ollama-and-whisper)
 
 ### 3. 📝 PersonalNotesAssistant
 - Converts voice or text messages into clean, summarized notes.
